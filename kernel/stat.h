@@ -2,6 +2,7 @@
 #define T_FILE    2   // File
 #define T_DEVICE  3   // Device
 
+// 表示文件系统中一个文件或目录的状态信息
 struct stat {
   int dev;     // File system's disk device
   uint ino;    // Inode number

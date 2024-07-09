@@ -53,7 +53,7 @@ argraw(int n)
   return -1;
 }
 
-// Fetch the nth 32-bit system call argument.
+// Fetch the nth 32-bit system call argument. 获取系统调用的第n个32位整数参数
 int
 argint(int n, int *ip)
 {

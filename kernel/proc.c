@@ -571,7 +571,7 @@ sleep(void *chan, struct spinlock *lk)
   p->chan = chan;
   p->state = SLEEPING;
 
-  sched();
+  sched();  // 挂起当前进程，让出CPU给其他进程使用
 
   // Tidy up.
   p->chan = 0;

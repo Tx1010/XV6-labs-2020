@@ -54,7 +54,7 @@ struct dinode {
 #define DIRSIZ 14
 
 struct dirent {
-  ushort inum;
+  ushort inum;  // inode是文件系统中的一个概念，每个文件或目录都有一个唯一的inode编号，它包含了该文件或目录的元数据信息
   char name[DIRSIZ];
 };
 

@@ -20,10 +20,10 @@ struct context {
 
 // Per-CPU state.
 struct cpu {
-  struct proc *proc;          // The process running on this cpu, or null.
-  struct context context;     // swtch() here to enter scheduler().
-  int noff;                   // Depth of push_off() nesting.
-  int intena;                 // Were interrupts enabled before push_off()?
+  struct proc *proc;          // The process running on this cpu, or null. 这个指针用于指向当前在这个CPU上运行的进程。如果没有进程在该CPU上运行，则此指针为 null。
+  struct context context;     // swtch() here to enter scheduler(). 这个结构体用于存储CPU的上下文信息，使得操作系统可以在进程或线程之间进行上下文切换。swtch() 函数会使用这个上下文信息来进入调度器，从而选择下一个要运行的进程或线程。
+  int noff;                   // Depth of push_off() nesting. 这一行定义了一个整型变量 noff，用于记录 push_off() 函数调用的嵌套深度。push_off() 是一个通常用于禁用中断的函数
+  int intena;                 // Were interrupts enabled before push_off()? 这一行定义了一个整型变量 intena，用于记录在调用 push_off() 函数之前，中断是否被启用。这个变量用于在调用 pop_off() 函数时恢复中断状态。
 };
 
 extern struct cpu cpus[NCPU];
@@ -82,25 +82,25 @@ struct trapframe {
 
 enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
-// Per-process state
+// Per-process state 操作系统中的进程状态
 struct proc {
-  struct spinlock lock;
+  struct spinlock lock;  // 一个自旋锁（spinlock），用于在修改进程状态时保证线程安全。
 
   // p->lock must be held when using these:
-  enum procstate state;        // Process state
-  struct proc *parent;         // Parent process
-  void *chan;                  // If non-zero, sleeping on chan
-  int killed;                  // If non-zero, have been killed
-  int xstate;                  // Exit status to be returned to parent's wait
-  int pid;                     // Process ID
+  enum procstate state;        // Process state 进程的状态，是一个枚举类型 procstate，表示进程当前的运行状态，如运行、等待、睡眠等。
+  struct proc *parent;         // Parent process 指向父进程的指针，表示当前进程的父进程。
+  void *chan;                  // If non-zero, sleeping on chan 如果非零，表示进程正在此通道上睡眠。
+  int killed;                  // If non-zero, have been killed 如果非零，表示进程已被杀死。
+  int xstate;                  // Exit status to be returned to parent's wait 进程退出时返回给父进程的状态码。
+  int pid;                     // Process ID 进程ID，是进程的唯一标识符。
 
   // these are private to the process, so p->lock need not be held.
-  uint64 kstack;               // Virtual address of kernel stack
-  uint64 sz;                   // Size of process memory (bytes)
-  pagetable_t pagetable;       // User page table
-  struct trapframe *trapframe; // data page for trampoline.S
-  struct context context;      // swtch() here to run process
-  struct file *ofile[NOFILE];  // Open files
-  struct inode *cwd;           // Current directory
-  char name[16];               // Process name (debugging)
+  uint64 kstack;               // Virtual address of kernel stack 内核栈的虚拟地址。
+  uint64 sz;                   // Size of process memory (bytes) 进程内存的大小（字节）。
+  pagetable_t pagetable;       // User page table 用户页表，用于管理进程的虚拟内存。
+  struct trapframe *trapframe; // data page for trampoline.S 用于 trampoline.S 的数据页，存储进程的寄存器等状态信息，以便于上下文切换。
+  struct context context;      // swtch() here to run process 上下文信息，用于 swtch() 函数在进程间切换时保存和恢复进程状态。
+  struct file *ofile[NOFILE];  // Open files 打开的文件数组，每个进程可以打开多个文件，这里通过数组管理这些文件的指针。
+  struct inode *cwd;           // Current directory 当前工作目录，是一个指向 inode 结构的指针，表示进程的工作目录。
+  char name[16];               // Process name (debugging) 进程名，主要用于调试。
 };

@@ -23,7 +23,7 @@ strcmp(const char *p, const char *q)
 }
 
 uint
-strlen(const char *s)
+strlen(const char *s)  // 函数计算s中字符串的长度，不包括终止的空字符
 {
   int n;
 

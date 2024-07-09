@@ -29,12 +29,12 @@ ls(char *path)
   int fd;
   struct dirent de;
   struct stat st;
-
+  // 判断能否打开文件（读）
   if((fd = open(path, 0)) < 0){
     fprintf(2, "ls: cannot open %s\n", path);
     return;
   }
-
+  // 将打开文件fd的信息放入st
   if(fstat(fd, &st) < 0){
     fprintf(2, "ls: cannot stat %s\n", path);
     close(fd);
@@ -52,13 +52,14 @@ ls(char *path)
       break;
     }
     strcpy(buf, path);
-    p = buf+strlen(buf);
+    p = buf + strlen(buf);  // 指向字符串的终止空字符的位置
     *p++ = '/';
+    // 每次读取一个目录项的内容，直到没有更多的目录项可以读取为止, de存储从目录读取的每个目录项的信息。
     while(read(fd, &de, sizeof(de)) == sizeof(de)){
       if(de.inum == 0)
         continue;
       memmove(p, de.name, DIRSIZ);
-      p[DIRSIZ] = 0;
+      p[DIRSIZ] = 0;   // 将p所指向的内存位置的第 DIRSIZ 个字节（即最后一个字符）设置为 '\0'
       if(stat(buf, &st) < 0){
         printf("ls: cannot stat %s\n", buf);
         continue;

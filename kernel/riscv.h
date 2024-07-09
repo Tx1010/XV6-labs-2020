@@ -289,6 +289,7 @@ r_sp()
 
 // read and write tp, the thread pointer, which holds
 // this core's hartid (core number), the index into cpus[].
+// 用于读取 RISC-V 架构中的 tp（thread pointer，线程指针）寄存器的值。tp 寄存器在 RISC-V 中用于存储当前核心的 hartid（硬件线程ID），这个ID是 cpus[] 数组的索引，用于标识当前执行线程所在的核心。
 static inline uint64
 r_tp()
 {

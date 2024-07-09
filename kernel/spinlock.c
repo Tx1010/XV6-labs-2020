@@ -85,15 +85,19 @@ holding(struct spinlock *lk)
 // it takes two pop_off()s to undo two push_off()s.  Also, if interrupts
 // are initially off, then push_off, pop_off leaves them off.
 
+// 这段代码定义了两个函数：push_off 和 pop_off，它们用于管理中断的启用和禁用状态，
+// 但与直接的中断开关（intr_off()/intr_on()）不同，这两个函数提供了一种匹配机制，使得必须通过相等数量的 pop_off() 调用来撤销 push_off() 的效果。
+// 这种设计允许在嵌套调用中更精细地控制中断状态。
+
 void
 push_off(void)
 {
-  int old = intr_get();
+  int old = intr_get();  // 获取当前中断状态（开启或关闭）
 
-  intr_off();
+  intr_off();  // 禁用中断
   if(mycpu()->noff == 0)
     mycpu()->intena = old;
-  mycpu()->noff += 1;
+  mycpu()->noff += 1; //表示对 push_off 的调用次数
 }
 
 void
@@ -101,7 +105,7 @@ pop_off(void)
 {
   struct cpu *c = mycpu();
   if(intr_get())
-    panic("pop_off - interruptible");
+    panic("pop_off - interruptible"); // 抛出错误
   if(c->noff < 1)
     panic("pop_off");
   c->noff -= 1;
