@@ -77,13 +77,13 @@ strncpy(char *s, const char *t, int n)
   return os;
 }
 
-// Like strncpy but guaranteed to NUL-terminate.
+// Like strncpy but guaranteed to NULL-terminate. 因为strncpy在某些情况下可能不会在目标字符串的末尾添加NUL字符，从而可能导致字符串操作的安全问题。
 char*
 safestrcpy(char *s, const char *t, int n)
 {
   char *os;
 
-  os = s;
+  os = s; // 保存目标字符串的初始地址
   if(n <= 0)
     return os;
   while(--n > 0 && (*s++ = *t++) != 0)

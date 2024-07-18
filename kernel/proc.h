@@ -80,7 +80,7 @@ struct trapframe {
   /* 280 */ uint64 t6;
 };
 
-enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE }; // 已分配、就绪态、运行态、等待I/O中（阻塞态）、退出
 
 // Per-process state 操作系统中的进程状态
 struct proc {

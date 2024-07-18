@@ -9,10 +9,10 @@ r_mhartid()
 
 // Machine Status Register, mstatus
 
-#define MSTATUS_MPP_MASK (3L << 11) // previous mode.
-#define MSTATUS_MPP_M (3L << 11)
-#define MSTATUS_MPP_S (1L << 11)
-#define MSTATUS_MPP_U (0L << 11)
+#define MSTATUS_MPP_MASK (3L << 11) // previous mode.  提取或设置mstatus寄存器中与之前模式（MPP）相关的位。MPP字段位于mstatus寄存器的第11和第12位，占用2位
+#define MSTATUS_MPP_M (3L << 11)    // 设置MPP字段为机器模式
+#define MSTATUS_MPP_S (1L << 11)    // 设置MPP字段为监督模式
+#define MSTATUS_MPP_U (0L << 11)    // 设置MPP字段为用户模式
 #define MSTATUS_MIE (1L << 3)    // machine-mode interrupt enable.
 
 static inline uint64
