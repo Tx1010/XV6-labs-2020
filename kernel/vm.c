@@ -364,7 +364,7 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
     n = PGSIZE - (dstva - va0);
     if(n > len)
       n = len;
-    memmove((void *)(pa0 + (dstva - va0)), src, n);
+    memmove((void *)(pa0 + (dstva - va0)), src, n);  //(pa0 + (dstva - va0)) 计算出目标虚拟地址 dstva 对应的实际物理地址。
 
     len -= n;
     src += n;

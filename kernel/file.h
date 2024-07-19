@@ -1,5 +1,5 @@
 struct file {
-  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type; //D_NONE表示这个结构体实例没有被使用或代表任何文件/设备，FD_PIPE表示管道，FD_INODE表示普通文件，而FD_DEVICE表示设备文件。
   int ref; // reference count
   char readable;
   char writable;

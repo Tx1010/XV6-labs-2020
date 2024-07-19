@@ -12,7 +12,7 @@ sub entry {
     print "${name}:\n";
     print " li a7, SYS_${name}\n";
     print " ecall\n";
-    print " ret\n";
+    print " ret\n";  # 使用 RISC-V 架构的 ecall 指令将用户空间的系统调用转发到操作系统内核
 }
 	
 entry("fork");
@@ -36,3 +36,5 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
+entry("trace");
+entry("sysinfo");
