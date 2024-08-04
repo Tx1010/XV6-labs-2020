@@ -311,7 +311,7 @@ r_ra()
   return x;
 }
 
-// flush the TLB.
+// flush the TLB.在RISC-V架构的环境下刷新（flush）整个翻译后备缓冲器（TLB）。TLB是一种硬件缓存，用于加速虚拟地址到物理地址的转换过程。
 static inline void
 sfence_vma()
 {

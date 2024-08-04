@@ -64,7 +64,7 @@ usertrap(void)
     // so don't enable until done with those registers.
     intr_on();
 
-    syscall();
+    syscall();       //执行系统调用
   } else if((which_dev = devintr()) != 0){
     // ok
   } else {
@@ -80,7 +80,7 @@ usertrap(void)
   if(which_dev == 2)
     yield();
 
-  usertrapret();
+  usertrapret();    //切换到用户空间
 }
 
 //
@@ -125,7 +125,7 @@ usertrapret(void)
   // switches to the user page table, restores user registers,
   // and switches to user mode with sret.
   uint64 fn = TRAMPOLINE + (userret - trampoline);
-  ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);
+  ((void (*)(uint64,uint64))fn)(TRAPFRAME, satp);     //将fn指针作为一个函数指针，执行相应的函数（也就是userret函数）并传入两个参数，两个参数存储在a0，a1寄存器中。
 }
 
 // interrupts and exceptions from kernel code go here via kernelvec,

@@ -31,7 +31,7 @@ kinit()
 }
 
 void
-freerange(void *pa_start, void *pa_end)
+freerange(void *pa_start, void *pa_end)   //释放一段连续的物理内存区域
 {
   char *p;
   p = (char*)PGROUNDUP((uint64)pa_start);
@@ -57,7 +57,9 @@ kfree(void *pa)
   r = (struct run*)pa;
 
   acquire(&kmem.lock);
-  r->next = kmem.freelist;
+  // 将当前页的 next 指针指向空闲链表的头部
+  r->next = kmem.freelist;  
+  // 将空闲链表的头部更新为当前页
   kmem.freelist = r;
   release(&kmem.lock);
 }
