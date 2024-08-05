@@ -108,6 +108,7 @@ void            yield(void);
 int             either_copyout(int user_dst, uint64 dst, void *src, uint64 len);
 int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
 void            procdump(void);
+void            proc_freekernelpt(pagetable_t kernelpt);
 
 // swtch.S
 void            swtch(struct context*, struct context*);
@@ -178,6 +179,20 @@ uint64          walkaddr(pagetable_t, uint64);
 int             copyout(pagetable_t, uint64, char *, uint64);
 int             copyin(pagetable_t, char *, uint64, uint64);
 int             copyinstr(pagetable_t, char *, uint64, uint64);
+// 1
+void            vmprint(pagetable_t);
+// 2
+pagetable_t     proc_kpt_init(void); // 用于内核页表的初始化
+void            kvminithart(void); 
+void            uvmmap(pagetable_t, uint64, uint64, uint64, int); 
+void            proc_inithart(pagetable_t); // 将进程的内核页表保存到SATP寄存器
+// 3
+void            u2kvmcopy(pagetable_t pagetable, pagetable_t kernelpt, uint64 oldsz, uint64 newsz);
+// vmcopyin.c
+int             copyin_new(pagetable_t, char *, uint64, uint64);
+int             copyinstr_new(pagetable_t, char *, uint64, uint64);
+
+
 
 // plic.c
 void            plicinit(void);
@@ -223,5 +238,3 @@ int             sockread(struct sock *, uint64, int);
 int             sockwrite(struct sock *, uint64, int);
 void            sockrecvudp(struct mbuf*, uint32, uint16, uint16);
 #endif
-
-void            vmprint(pagetable_t);
