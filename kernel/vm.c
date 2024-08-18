@@ -77,19 +77,19 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
 
   for(int level = 2; level > 0; level--) {
     pte_t *pte = &pagetable[PX(level, va)];
-    if(*pte & PTE_V) {
-      pagetable = (pagetable_t)PTE2PA(*pte);
+    if(*pte & PTE_V) {                        //如果当前页表项有效（即 PTE_V 位被设置），则通过宏 PTE2PA 获取下一层页表的物理地址
+      pagetable = (pagetable_t)PTE2PA(*pte);  //移除页表项中的低 10 位，这些位通常用于存储权限和其他控制信息。接下来，将结果左移12位,将物理页帧号移到正确的位置
     } else {
-      if(!alloc || (pagetable = (pde_t*)kalloc()) == 0)
+      if(!alloc || (pagetable = (pde_t*)kalloc()) == 0)  //如果当前页表项无效且 alloc 参数不为零，函数将调用 kalloc 分配一个新的页表页（物理内存分配）
         return 0;
       memset(pagetable, 0, PGSIZE);
       *pte = PA2PTE(pagetable) | PTE_V;
     }
   }
-  return &pagetable[PX(0, va)];
+  return &pagetable[PX(0, va)];  //返回最底层页表的页表项的地址(内容是物理地址)
 }
 
-// Look up a virtual address, return the physical address,
+// Look up a virtual address, return the physical address, 查找虚拟地址 va 对应的物理地址，并返回该物理地址。
 // or 0 if not mapped.
 // Can only be used to look up user pages.
 uint64
@@ -112,7 +112,7 @@ walkaddr(pagetable_t pagetable, uint64 va)
   return pa;
 }
 
-// add a mapping to the kernel page table.
+// add a mapping to the kernel page table. 向内核页表添加映射
 // only used when booting.
 // does not flush TLB or enable paging.
 void
@@ -140,10 +140,10 @@ kvmpa(uint64 va)
   if((*pte & PTE_V) == 0)
     panic("kvmpa");
   pa = PTE2PA(*pte);
-  return pa+off;
+  return pa + off;     //通过 PTE2PA 宏将页表项转换为物理地址，并将偏移量 off 加到物理地址上，最终返回计算得到的物理地址
 }
 
-// Create PTEs for virtual addresses starting at va that refer to
+// Create PTEs for virtual addresses starting at va that refer to  从虚拟地址 va 开始的虚拟地址创建页表项（PTE），这些页表项指向从物理地址 pa 开始的物理地址
 // physical addresses starting at pa. va and size might not
 // be page-aligned. Returns 0 on success, -1 if walk() couldn't
 // allocate a needed page-table page.
@@ -190,7 +190,7 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
       panic("uvmunmap: not a leaf");
     if(do_free){
       uint64 pa = PTE2PA(*pte);
-      kfree((void*)pa);
+      kfree((void*)pa);           // 释放一个物理页
     }
     *pte = 0;
   }
@@ -209,7 +209,7 @@ uvmcreate()
   return pagetable;
 }
 
-// Load the user initcode into address 0 of pagetable,
+// Load the user initcode into address 0 of pagetable,   将用户初始化代码加载到页表的地址 0 处，这是为第一个进程准备的。
 // for the very first process.
 // sz must be less than a page.
 void
@@ -225,7 +225,7 @@ uvminit(pagetable_t pagetable, uchar *src, uint sz)
   memmove(mem, src, sz);
 }
 
-// Allocate PTEs and physical memory to grow process from oldsz to
+// Allocate PTEs and physical memory to grow process from oldsz to    分配页表条目（PTEs）和物理内存，以便将进程的内存从 oldsz 增长到 newsz
 // newsz, which need not be page aligned.  Returns new size or 0 on error.
 uint64
 uvmalloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
@@ -253,7 +253,7 @@ uvmalloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
   return newsz;
 }
 
-// Deallocate user pages to bring the process size from oldsz to
+// Deallocate user pages to bring the process size from oldsz to  释放用户页，以将进程大小从 oldsz 调整到 newsz
 // newsz.  oldsz and newsz need not be page-aligned, nor does newsz
 // need to be less than oldsz.  oldsz can be larger than the actual
 // process size.  Returns the new process size.

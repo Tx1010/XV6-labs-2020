@@ -23,12 +23,12 @@ start()
   // set M Previous Privilege mode to Supervisor, for mret.
   unsigned long x = r_mstatus();
   x &= ~MSTATUS_MPP_MASK;
-  x |= MSTATUS_MPP_S;
-  w_mstatus(x);
+  x |= MSTATUS_MPP_S;     //设置为supervisor模式
+  w_mstatus(x);           //确保在执行 mret 指令时，系统会切换到监督模式。
 
   // set M Exception Program Counter to main, for mret.
   // requires gcc -mcmodel=medany
-  w_mepc((uint64)main);
+  w_mepc((uint64)main);   // mret 指令执行时，程序将跳转到 main 函数
 
   // disable paging for now.
   w_satp(0);
