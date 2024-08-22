@@ -156,7 +156,7 @@ uartstart()
     // maybe uartputc() is waiting for space in the buffer.
     wakeup(&uart_tx_r);
     
-    WriteReg(THR, c);
+    WriteReg(THR, c);   //锁确保了一个时间只有一个CPU上的进程可以写入UART的寄存器THR。所以这里锁确保了硬件寄存器只有一个写入者。
   }
 }
 
